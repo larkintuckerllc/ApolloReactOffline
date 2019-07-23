@@ -1,5 +1,8 @@
 import { ApolloProvider } from '@apollo/react-hooks';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import AsyncStorage from '@react-native-community/async-storage';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { persistCache } from 'apollo-cache-persist';
+import { PersistedData, PersistentStorage } from 'apollo-cache-persist/types';
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { onError } from 'apollo-link-error';
@@ -8,7 +11,8 @@ import loggerLink from 'apollo-link-logger';
 import QueueLink from 'apollo-link-queue';
 import { RetryLink } from 'apollo-link-retry';
 import SerializingLink from 'apollo-link-serialize';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import store from '../../store';
@@ -42,13 +46,27 @@ const client = new ApolloClient({
 });
 
 const AppWithApollo: FC = () => {
+  const [cachePersisted, setCachePersisted] = useState(false);
   const online = useSelector(getOnline);
   if (online) {
     queueLink.open();
   } else {
     queueLink.close();
   }
+  useEffect(() => {
+    const execute = async () => {
+      await persistCache({
+        cache,
+        storage: AsyncStorage as PersistentStorage<PersistedData<NormalizedCacheObject>>,
+      });
+      setCachePersisted(true);
+    };
+    execute();
+  }, []);
 
+  if (!cachePersisted) {
+    return <Text>Loading</Text>;
+  }
   return (
     <ApolloProvider client={client}>
       <AppOnline />

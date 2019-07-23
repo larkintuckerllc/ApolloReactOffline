@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@apollo/react-hooks": "^0.1.0-beta.11",
+    "@react-native-community/async-storage": "^1.5.1",
     "@react-native-community/netinfo": "^4.1.2",
     "@types/react-redux": "^7.1.1",
     "@types/uuid": "^3.4.5",
     "apollo-cache-inmemory": "^1.6.2",
+    "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.12",
     "apollo-link-error": "^1.1.11",
