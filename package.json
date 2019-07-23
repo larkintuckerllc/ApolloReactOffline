@@ -1,0 +1,55 @@
+{
+  "name": "ApolloReactOffline",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^0.1.0-beta.11",
+    "@react-native-community/netinfo": "^4.1.2",
+    "@types/react-redux": "^7.1.1",
+    "@types/uuid": "^3.4.5",
+    "apollo-cache-inmemory": "^1.6.2",
+    "apollo-client": "^2.6.3",
+    "apollo-link": "^1.2.12",
+    "apollo-link-error": "^1.1.11",
+    "apollo-link-http": "^1.5.15",
+    "apollo-link-logger": "^1.2.3",
+    "apollo-link-queue": "^2.2.0",
+    "apollo-link-retry": "^2.2.14",
+    "apollo-link-serialize": "^3.1.1",
+    "graphql": "^14.4.2",
+    "graphql-tag": "^2.10.1",
+    "react": "16.8.6",
+    "react-native": "0.60.4",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.4",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "@types/jest": "^24.0.15",
+    "@types/react": "^16.8.23",
+    "@types/react-native": "^0.60.2",
+    "@types/react-test-renderer": "^16.8.2",
+    "babel-jest": "^24.8.0",
+    "eslint": "^6.0.1",
+    "jest": "^24.8.0",
+    "metro-react-native-babel-preset": "^0.55.0",
+    "prettier": "^1.18.2",
+    "react-test-renderer": "16.8.6",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.5.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
