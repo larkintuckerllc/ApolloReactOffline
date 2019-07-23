@@ -9,7 +9,7 @@ import {
   CreateTodoVariables,
   handleCreateTodoUpdate,
 } from '../../../graphql/todos';
-import { getOnline } from '../../../store/reducers/online';
+import { getOnline } from '../../../store/ducks/online';
 
 // TODO: USE A FORMS LIBRARY INSTEAD; FORMIK
 const AppTodosCreate: FC = () => {

@@ -12,7 +12,7 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import store from '../../store';
-import { getOnline } from '../../store/reducers/online';
+import { getOnline } from '../../store/ducks/online';
 import trackerOpenLink from '../../utils/trackerOpenLink';
 import AppOnline from './AppOnline';
 import AppTodos from './AppTodos';

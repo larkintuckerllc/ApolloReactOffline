@@ -3,8 +3,8 @@ import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
-import { ActionType } from '../../../store/reducers/';
-import { getOnline, setOnline } from '../../../store/reducers/online';
+import { ActionType } from '../../../store/ducks/';
+import { getOnline, setOnline } from '../../../store/ducks/online';
 import styles from './styles';
 
 const AppOnline: FC = () => {
