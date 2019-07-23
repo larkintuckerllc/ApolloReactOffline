@@ -1,10 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
-import { useSelector } from 'react-redux';
-import { getTrackedQueries } from '../../store/ducks/trackedQueries';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrackedQueries, trackedQueriesRemove } from '../../store/ducks/trackedQueries';
 
 const AppTrackedQueries: FC = () => {
+  const dispatch = useDispatch();
   const trackedQueries = useSelector(getTrackedQueries);
+  useEffect(() => {
+    trackedQueries.forEach(trackedQuery => {
+      // TODO: REGENERATE MUTATIONS
+      dispatch(trackedQueriesRemove(trackedQuery.id));
+    });
+  }, []);
 
   return (
     <View>

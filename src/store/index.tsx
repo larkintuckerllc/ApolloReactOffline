@@ -10,6 +10,7 @@ interface MyWindow extends Window {
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  whitelist: ['trackedQueries'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);

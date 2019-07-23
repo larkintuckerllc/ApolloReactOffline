@@ -18,14 +18,13 @@ export default (dispatch: Dispatch<ActionType>) =>
     if (context.tracked !== undefined) {
       dispatch(
         trackedQueriesAdd({
+          contextJSON,
           id,
+          name,
+          queryJSON,
+          variablesJSON,
         })
       );
-      // TODO: STORE IN REDUX
-      console.log(name);
-      console.log(queryJSON);
-      console.log(variablesJSON);
-      console.log(contextJSON);
     }
     return forward(operation).map(data => {
       if (context.tracked !== undefined) {

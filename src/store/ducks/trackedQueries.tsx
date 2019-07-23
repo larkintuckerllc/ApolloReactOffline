@@ -3,7 +3,11 @@ import { createSelector } from 'reselect';
 import { ActionType, State } from '../ducks';
 
 interface TrackedQuery {
+  contextJSON: string;
   id: string;
+  name: string;
+  queryJSON: string;
+  variablesJSON: string;
 }
 
 // ACTIONS
