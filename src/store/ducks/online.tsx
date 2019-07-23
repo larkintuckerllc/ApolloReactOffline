@@ -1,4 +1,4 @@
-import { ActionType, State } from '../reducers';
+import { ActionType, State } from '../ducks';
 
 // ACTIONS
 const SET_ONLINE = 'SET_ONLINE';
@@ -19,8 +19,7 @@ export const setOnline = (state: boolean): SetOnlineAction => ({
 // REDUCERS
 export type OnlineState = boolean;
 
-// TODO: SYNC CHECK
-const reducer = (state: OnlineState = false, action: ActionType) => {
+export default (state: OnlineState = false, action: ActionType) => {
   switch (action.type) {
     case SET_ONLINE:
       return action.payload;
@@ -28,8 +27,6 @@ const reducer = (state: OnlineState = false, action: ActionType) => {
       return state;
   }
 };
-
-export default reducer;
 
 // SELECTORS
 export const getOnline = (state: State) => state.online;
