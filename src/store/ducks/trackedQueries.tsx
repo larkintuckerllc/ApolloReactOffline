@@ -7,18 +7,29 @@ interface TrackedQuery {
 
 // ACTIONS
 const TRACKED_QUERIES_ADD = 'TRACKED_QUERIES_ADD';
+const TRACKED_QUERIES_REMOVE = 'TRACKED_QUERIES_REMOVE';
 
 interface TrackedQueriesAdd {
   payload: TrackedQuery;
   type: typeof TRACKED_QUERIES_ADD;
 }
 
-export type TrackedQueriesActionType = TrackedQueriesAdd;
+interface TrackedQueriesRemove {
+  payload: string;
+  type: typeof TRACKED_QUERIES_REMOVE;
+}
+
+export type TrackedQueriesActionType = TrackedQueriesAdd | TrackedQueriesRemove;
 
 // ACTION CREATORS
 export const trackedQueriesAdd = (trackedQuery: TrackedQuery): TrackedQueriesAdd => ({
   payload: trackedQuery,
   type: TRACKED_QUERIES_ADD,
+});
+
+export const trackedQueriesRemove = (id: string): TrackedQueriesRemove => ({
+  payload: id,
+  type: TRACKED_QUERIES_REMOVE,
 });
 
 // REDUCERS
@@ -34,12 +45,19 @@ export interface TrackedQueriesState {
 }
 
 const byId = (state: TrackedQueriesById = {}, action: ActionType) => {
+  let newState: TrackedQueriesById;
   switch (action.type) {
     case TRACKED_QUERIES_ADD:
-      const newState = {
+      newState = {
         ...state,
         [action.payload.id]: action.payload,
       };
+      return newState;
+    case TRACKED_QUERIES_REMOVE:
+      newState = {
+        ...state,
+      };
+      delete newState[action.payload];
       return newState;
     default:
       return state;
@@ -47,9 +65,13 @@ const byId = (state: TrackedQueriesById = {}, action: ActionType) => {
 };
 
 const ids = (state: TrackedQueriesIds = [], action: ActionType) => {
+  let newState: TrackedQueriesIds;
   switch (action.type) {
     case TRACKED_QUERIES_ADD:
-      const newState = [...state, action.payload.id];
+      newState = [...state, action.payload.id];
+      return newState;
+    case TRACKED_QUERIES_REMOVE:
+      newState = state.filter(id => id !== action.payload);
       return newState;
     default:
       return state;

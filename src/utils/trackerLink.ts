@@ -2,7 +2,7 @@ import { ApolloLink } from 'apollo-link';
 import { Dispatch } from 'redux';
 import uuidv4 from 'uuid/v4';
 import { ActionType } from '../store/ducks';
-import { trackedQueriesAdd } from '../store/ducks/trackedQueries';
+import { trackedQueriesAdd, trackedQueriesRemove } from '../store/ducks/trackedQueries';
 
 export default (dispatch: Dispatch<ActionType>) =>
   new ApolloLink((operation, forward) => {
@@ -14,8 +14,8 @@ export default (dispatch: Dispatch<ActionType>) =>
     const variablesJSON: string = JSON.stringify(operation.variables);
     const context = operation.getContext();
     const contextJSON = JSON.stringify(context);
+    const id = uuidv4();
     if (context.tracked !== undefined) {
-      const id = uuidv4();
       dispatch(
         trackedQueriesAdd({
           id,
@@ -27,5 +27,10 @@ export default (dispatch: Dispatch<ActionType>) =>
       console.log(variablesJSON);
       console.log(contextJSON);
     }
-    return forward(operation);
+    return forward(operation).map(data => {
+      if (context.tracked !== undefined) {
+        dispatch(trackedQueriesRemove(id));
+      }
+      return data;
+    });
   });
