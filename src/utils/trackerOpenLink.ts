@@ -1,6 +1,8 @@
 import { ApolloLink } from 'apollo-link';
 import { Dispatch } from 'redux';
-import { ActionType } from '../store/reducers';
+import uuidv4 from 'uuid/v4';
+import { ActionType } from '../store/ducks';
+import { trackedQueriesAdd } from '../store/ducks/trackedQueries';
 
 export default (dispatch: Dispatch<ActionType>) =>
   new ApolloLink((operation, forward) => {
@@ -13,6 +15,12 @@ export default (dispatch: Dispatch<ActionType>) =>
     const context = operation.getContext();
     const contextJSON = JSON.stringify(context);
     if (context.tracked !== undefined) {
+      const id = uuidv4();
+      dispatch(
+        trackedQueriesAdd({
+          id,
+        })
+      );
       // TODO: STORE IN REDUX
       console.log(name);
       console.log(queryJSON);

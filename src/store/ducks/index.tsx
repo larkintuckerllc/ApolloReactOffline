@@ -10,4 +10,5 @@ export interface State {
 
 export default combineReducers({
   online,
+  trackedQueries,
 });
