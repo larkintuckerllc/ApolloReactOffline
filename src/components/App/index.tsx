@@ -16,6 +16,7 @@ import { getOnline } from '../../store/ducks/online';
 import trackerLink from '../../utils/trackerLink';
 import AppOnline from './AppOnline';
 import AppTodos from './AppTodos';
+import AppTrackedQueries from './AppTrackedQueries';
 
 const cache = new InMemoryCache();
 const errorLink = onError(() => {
@@ -52,6 +53,7 @@ const AppWithApollo: FC = () => {
     <ApolloProvider client={client}>
       <AppOnline />
       <AppTodos />
+      <AppTrackedQueries />
     </ApolloProvider>
   );
 };
