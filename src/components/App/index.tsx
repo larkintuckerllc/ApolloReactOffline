@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
 import store from '../../store';
 import { getOnline } from '../../store/reducers/online';
+import trackerOpenLink from '../../utils/trackerOpenLink';
 import AppOnline from './AppOnline';
 import AppTodos from './AppTodos';
 
@@ -28,7 +29,15 @@ const retryLink = new RetryLink();
 const serializingLink = new SerializingLink();
 const client = new ApolloClient({
   cache,
-  link: ApolloLink.from([loggerLink, errorLink, queueLink, serializingLink, retryLink, httpLink]),
+  link: ApolloLink.from([
+    loggerLink, // TODO: TEMP
+    errorLink, // TODO: TEMP
+    trackerOpenLink(store.dispatch),
+    queueLink,
+    serializingLink,
+    retryLink,
+    httpLink,
+  ]),
 });
 
 const AppWithApollo: FC = () => {

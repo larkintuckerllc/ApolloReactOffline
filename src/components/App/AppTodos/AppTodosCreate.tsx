@@ -22,6 +22,7 @@ const AppTodosCreate: FC = () => {
     {
       context: {
         serializationKey: 'MUTATION',
+        tracked: true,
       },
       update: handleCreateTodoUpdate,
     }

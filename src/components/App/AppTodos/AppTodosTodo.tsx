@@ -20,6 +20,7 @@ const AppTodosTodo: FC<Props> = ({ id, title }) => {
   >(DELETE_TODO_BY_ID_MUTATION, {
     context: {
       serializationKey: 'MUTATION',
+      tracked: true,
     },
     update: handleDeleteTodoUpdate,
   });

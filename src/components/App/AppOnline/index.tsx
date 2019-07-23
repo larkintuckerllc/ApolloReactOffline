@@ -2,11 +2,13 @@ import NetInfo from '@react-native-community/netinfo';
 import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Dispatch } from 'redux';
+import { ActionType } from '../../../store/reducers/';
 import { getOnline, setOnline } from '../../../store/reducers/online';
 import styles from './styles';
 
 const AppOnline: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<Dispatch<ActionType>>();
   const online = useSelector(getOnline);
   useEffect(() => {
     const checkOnline = async () => {
