@@ -15,7 +15,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Provider } from 'react-redux';
-import store from '../../store';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from '../../store';
 import { getOnline } from '../../store/ducks/online';
 import trackerLink from '../../utils/trackerLink';
 import AppOnline from './AppOnline';
@@ -65,7 +66,7 @@ const AppWithApollo: FC = () => {
   }, []);
 
   if (!cachePersisted) {
-    return <Text>Loading</Text>;
+    return <Text>Loading Apollo Client Persistence</Text>;
   }
   return (
     <ApolloProvider client={client}>
@@ -78,7 +79,9 @@ const AppWithApollo: FC = () => {
 
 const AppWithApolloWithRedux: FC = () => (
   <Provider store={store}>
-    <AppWithApollo />
+    <PersistGate loading={<Text>Loading Redux Persistence</Text>} persistor={persistor}>
+      <AppWithApollo />
+    </PersistGate>
   </Provider>
 );
 
