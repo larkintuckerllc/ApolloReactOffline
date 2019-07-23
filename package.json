@@ -27,6 +27,7 @@
     "react-native": "0.60.4",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
+    "reselect": "^4.0.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

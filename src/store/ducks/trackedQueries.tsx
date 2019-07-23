@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { createSelector } from 'reselect';
 import { ActionType, State } from '../ducks';
 
 interface TrackedQuery {
@@ -82,8 +83,14 @@ export default combineReducers({
   byId,
   ids,
 });
-/*
 
 // SELECTORS
-// export const getOnline = (state: State) => state.online;
-*/
+const getTrackedQueriesIds = (state: State) => state.trackedQueries.ids;
+
+const getTrackedQueriesById = (state: State) => state.trackedQueries.byId;
+
+export const getTrackedQueries = createSelector(
+  getTrackedQueriesIds,
+  getTrackedQueriesById,
+  (pIds, pById) => pIds.map(o => pById[o])
+);
