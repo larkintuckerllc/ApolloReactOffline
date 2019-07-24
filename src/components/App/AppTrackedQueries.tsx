@@ -2,8 +2,10 @@ import { useApolloClient } from '@apollo/react-hooks';
 import React, { FC, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { handleCreateTodoUpdate } from '../../graphql/todos';
 import { getTrackedQueries, trackedQueriesRemove } from '../../store/ducks/trackedQueries';
 
+// TODO: NEED TO GENERALIZE UPDATE FUNCTIONS
 const AppTrackedQueries: FC = () => {
   const client = useApolloClient();
   const dispatch = useDispatch();
@@ -16,6 +18,8 @@ const AppTrackedQueries: FC = () => {
       client.mutate({
         context,
         mutation: query,
+        optimisticResponse: context.optimisticResponse,
+        update: handleCreateTodoUpdate,
         variables,
       });
       dispatch(trackedQueriesRemove(trackedQuery.id));
