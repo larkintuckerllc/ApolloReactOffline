@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider, useApolloClient } from '@apollo/react-hooks';
 import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
@@ -12,14 +12,16 @@ import loggerLink from 'apollo-link-logger';
 import QueueLink from 'apollo-link-queue';
 import { RetryLink } from 'apollo-link-retry';
 import SerializingLink from 'apollo-link-serialize';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { updateHandlerByName } from '../../graphql';
 import store, { persistor } from '../../store';
 import { ActionType } from '../../store/ducks/';
 import { getOnline, setOnline } from '../../store/ducks/online';
+import { getTrackedQueries, trackedQueriesRemove } from '../../store/ducks/trackedQueries';
 import trackerLink from '../../utils/trackerLink';
 import AppOnline from './AppOnline';
 import AppTodos from './AppTodos';
@@ -48,11 +50,42 @@ const client = new ApolloClient({
   ]),
 });
 
-const AppWithApollo: FC = () => {
+const AppUsingReduxUsingApollo: FC = () => {
+  const apolloClient = useApolloClient();
+  const dispatch = useDispatch();
+  const trackedQueries = useSelector(getTrackedQueries);
+  // TRACKED QUERIES
+  useEffect(() => {
+    trackedQueries.forEach(trackedQuery => {
+      const context = JSON.parse(trackedQuery.contextJSON);
+      const query = JSON.parse(trackedQuery.queryJSON);
+      const variables = JSON.parse(trackedQuery.variablesJSON);
+      apolloClient.mutate({
+        context,
+        mutation: query,
+        optimisticResponse: context.optimisticResponse,
+        update: updateHandlerByName[trackedQuery.name],
+        variables,
+      });
+      dispatch(trackedQueriesRemove(trackedQuery.id));
+    });
+  }, []);
+
+  return (
+    <Fragment>
+      <AppOnline />
+      <AppTodos />
+      <AppTrackedQueries />
+    </Fragment>
+  );
+};
+
+const AppUsingRedux: FC = () => {
   const dispatch = useDispatch<Dispatch<ActionType>>();
+  const online = useSelector(getOnline);
   const [onlineChecked, setOnlineChecked] = useState(false);
   const [cachePersisted, setCachePersisted] = useState(false);
-  const online = useSelector(getOnline);
+  // OFFLINE
   useEffect(() => {
     const execute = async () => {
       try {
@@ -69,6 +102,7 @@ const AppWithApollo: FC = () => {
     });
     return unsubscribe;
   }, []);
+  // APOLLO CLIENT PERSIST
   useEffect(() => {
     const execute = async () => {
       await persistCache({
@@ -79,6 +113,7 @@ const AppWithApollo: FC = () => {
     };
     execute();
   }, []);
+  // APOLLO CLIENT QUEUE
   useEffect(() => {
     if (online) {
       queueLink.open();
@@ -92,19 +127,17 @@ const AppWithApollo: FC = () => {
   }
   return (
     <ApolloProvider client={client}>
-      <AppOnline />
-      <AppTodos />
-      <AppTrackedQueries />
+      <AppUsingReduxUsingApollo />
     </ApolloProvider>
   );
 };
 
-const AppWithApolloWithRedux: FC = () => (
+const App: FC = () => (
   <Provider store={store}>
     <PersistGate loading={<Text>Loading Redux Persistence</Text>} persistor={persistor}>
-      <AppWithApollo />
+      <AppUsingRedux />
     </PersistGate>
   </Provider>
 );
 
-export default AppWithApolloWithRedux;
+export default App;

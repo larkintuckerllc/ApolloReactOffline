@@ -1,29 +1,10 @@
-import { useApolloClient } from '@apollo/react-hooks';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateHandlerByName } from '../../graphql';
-import { getTrackedQueries, trackedQueriesRemove } from '../../store/ducks/trackedQueries';
+import { useSelector } from 'react-redux';
+import { getTrackedQueries } from '../../store/ducks/trackedQueries';
 
 const AppTrackedQueries: FC = () => {
-  const client = useApolloClient();
-  const dispatch = useDispatch();
   const trackedQueries = useSelector(getTrackedQueries);
-  useEffect(() => {
-    trackedQueries.forEach(trackedQuery => {
-      const context = JSON.parse(trackedQuery.contextJSON);
-      const query = JSON.parse(trackedQuery.queryJSON);
-      const variables = JSON.parse(trackedQuery.variablesJSON);
-      client.mutate({
-        context,
-        mutation: query,
-        optimisticResponse: context.optimisticResponse,
-        update: updateHandlerByName[trackedQuery.name],
-        variables,
-      });
-      dispatch(trackedQueriesRemove(trackedQuery.id));
-    });
-  }, []);
 
   return (
     <View>
