@@ -53,24 +53,43 @@ const client = new ApolloClient({
 const AppUsingReduxUsingApollo: FC = () => {
   const apolloClient = useApolloClient();
   const dispatch = useDispatch();
+  const online = useSelector(getOnline);
   const trackedQueries = useSelector(getTrackedQueries);
+  const [trackedLoaded, setTrackedLoaded] = useState(false);
   // TRACKED QUERIES
   useEffect(() => {
-    trackedQueries.forEach(trackedQuery => {
-      const context = JSON.parse(trackedQuery.contextJSON);
-      const query = JSON.parse(trackedQuery.queryJSON);
-      const variables = JSON.parse(trackedQuery.variablesJSON);
-      apolloClient.mutate({
-        context,
-        mutation: query,
-        optimisticResponse: context.optimisticResponse,
-        update: updateHandlerByName[trackedQuery.name],
-        variables,
+    const execute = async () => {
+      const promises: Array<Promise<any>> = [];
+      trackedQueries.forEach(trackedQuery => {
+        const context = JSON.parse(trackedQuery.contextJSON);
+        const query = JSON.parse(trackedQuery.queryJSON);
+        const variables = JSON.parse(trackedQuery.variablesJSON);
+        promises.push(
+          apolloClient.mutate({
+            context,
+            mutation: query,
+            optimisticResponse: context.optimisticResponse,
+            update: updateHandlerByName[trackedQuery.name],
+            variables,
+          })
+        );
+        dispatch(trackedQueriesRemove(trackedQuery.id));
       });
-      dispatch(trackedQueriesRemove(trackedQuery.id));
-    });
+      if (online) {
+        try {
+          await Promise.all(promises);
+        } catch (e) {
+          //
+        }
+      }
+      setTrackedLoaded(true);
+    };
+    execute();
   }, []);
 
+  if (!trackedLoaded) {
+    return <Text>Loading Tracked Queries</Text>;
+  }
   return (
     <Fragment>
       <AppOnline />
