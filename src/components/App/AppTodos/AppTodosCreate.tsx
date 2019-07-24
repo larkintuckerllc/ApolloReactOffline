@@ -3,12 +3,8 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import uuidv4 from 'uuid/v4';
-import {
-  CREATE_TODO_MUTATION,
-  CreateTodoData,
-  CreateTodoVariables,
-  handleCreateTodoUpdate,
-} from '../../../graphql/todos';
+import { updateHandlerByName } from '../../../graphql';
+import { CREATE_TODO_MUTATION, CreateTodoData, CreateTodoVariables } from '../../../graphql/todos';
 import { getOnline } from '../../../store/ducks/online';
 
 // TODO: USE A FORMS LIBRARY INSTEAD; FORMIK
@@ -24,7 +20,7 @@ const AppTodosCreate: FC = () => {
         serializationKey: 'MUTATION',
         tracked: true,
       },
-      update: handleCreateTodoUpdate,
+      update: updateHandlerByName.createTodo,
     }
   );
   const handleChangeText = useCallback((text: string) => {
