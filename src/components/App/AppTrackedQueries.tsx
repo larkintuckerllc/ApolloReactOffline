@@ -13,7 +13,6 @@ const AppTrackedQueries: FC = () => {
       const context = JSON.parse(trackedQuery.contextJSON);
       const query = JSON.parse(trackedQuery.queryJSON);
       const variables = JSON.parse(trackedQuery.variablesJSON);
-      // TODO: CHANGE TO MUTATION
       client.mutate({
         context,
         mutation: query,

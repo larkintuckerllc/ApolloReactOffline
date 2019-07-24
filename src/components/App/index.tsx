@@ -1,5 +1,6 @@
 import { ApolloProvider } from '@apollo/react-hooks';
 import AsyncStorage from '@react-native-community/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { persistCache } from 'apollo-cache-persist';
 import { PersistedData, PersistentStorage } from 'apollo-cache-persist/types';
@@ -13,11 +14,12 @@ import { RetryLink } from 'apollo-link-retry';
 import SerializingLink from 'apollo-link-serialize';
 import React, { FC, useEffect, useState } from 'react';
 import { Text } from 'react-native';
-import { useSelector } from 'react-redux';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Dispatch } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from '../../store';
-import { getOnline } from '../../store/ducks/online';
+import { ActionType } from '../../store/ducks/';
+import { getOnline, setOnline } from '../../store/ducks/online';
 import trackerLink from '../../utils/trackerLink';
 import AppOnline from './AppOnline';
 import AppTodos from './AppTodos';
@@ -47,13 +49,26 @@ const client = new ApolloClient({
 });
 
 const AppWithApollo: FC = () => {
+  const dispatch = useDispatch<Dispatch<ActionType>>();
+  const [onlineChecked, setOnlineChecked] = useState(false);
   const [cachePersisted, setCachePersisted] = useState(false);
   const online = useSelector(getOnline);
-  if (online) {
-    queueLink.open();
-  } else {
-    queueLink.close();
-  }
+  useEffect(() => {
+    const execute = async () => {
+      try {
+        const state = await NetInfo.fetch();
+        dispatch(setOnline(state.isConnected));
+        setOnlineChecked(true);
+      } catch (err) {
+        //
+      }
+    };
+    execute();
+    const unsubscribe = NetInfo.addEventListener(state => {
+      dispatch(setOnline(state.isConnected));
+    });
+    return unsubscribe;
+  }, []);
   useEffect(() => {
     const execute = async () => {
       await persistCache({
@@ -64,9 +79,16 @@ const AppWithApollo: FC = () => {
     };
     execute();
   }, []);
+  useEffect(() => {
+    if (online) {
+      queueLink.open();
+    } else {
+      queueLink.close();
+    }
+  }, [online]);
 
-  if (!cachePersisted) {
-    return <Text>Loading Apollo Client Persistence</Text>;
+  if (!cachePersisted || !onlineChecked) {
+    return <Text>Loading Apollo Client Persistence or Online</Text>;
   }
   return (
     <ApolloProvider client={client}>

@@ -13,11 +13,7 @@ export default (dispatch: Dispatch<ActionType>) =>
     const queryJSON: string = JSON.stringify(operation.query);
     const variablesJSON: string = JSON.stringify(operation.variables);
     const context = operation.getContext();
-    const { serializationKey, tracked } = context;
-    const contextJSON = JSON.stringify({
-      serializationKey,
-      tracked,
-    });
+    const contextJSON = JSON.stringify(context);
     const id = uuidv4();
     if (context.tracked !== undefined) {
       dispatch(

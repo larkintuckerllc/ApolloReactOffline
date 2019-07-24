@@ -1,30 +1,11 @@
-import NetInfo from '@react-native-community/netinfo';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch } from 'redux';
-import { ActionType } from '../../../store/ducks/';
-import { getOnline, setOnline } from '../../../store/ducks/online';
+import { useSelector } from 'react-redux';
+import { getOnline } from '../../../store/ducks/online';
 import styles from './styles';
 
 const AppOnline: FC = () => {
-  const dispatch = useDispatch<Dispatch<ActionType>>();
   const online = useSelector(getOnline);
-  useEffect(() => {
-    const checkOnline = async () => {
-      try {
-        const state = await NetInfo.fetch();
-        dispatch(setOnline(state.isConnected));
-      } catch (err) {
-        //
-      }
-    };
-    checkOnline();
-    const unsubscribe = NetInfo.addEventListener(state => {
-      dispatch(setOnline(state.isConnected));
-    });
-    return unsubscribe;
-  }, []);
 
   return (
     <View style={styles.root}>
