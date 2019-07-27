@@ -9,7 +9,7 @@ import AppTodosTodo from './AppTodosTodo';
 
 const AppTodos: FC = () => {
   const online = useSelector(getOnline);
-  const fetchPolicy = online ? 'network-only' : 'cache-first';
+  const fetchPolicy = online ? 'network-only' : 'cache-only';
   const { loading, data, error } = useQuery<AllTodosData>(ALL_TODOS_QUERY, {
     fetchPolicy,
   });
