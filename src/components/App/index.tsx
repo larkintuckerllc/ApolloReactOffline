@@ -12,12 +12,13 @@ import loggerLink from 'apollo-link-logger';
 import QueueLink from 'apollo-link-queue';
 import { RetryLink } from 'apollo-link-retry';
 import SerializingLink from 'apollo-link-serialize';
-import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
-import { Button, Text } from 'react-native';
+import React, { FC, Fragment, useEffect, useState } from 'react';
+import { Text } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { updateHandlerByName } from '../../graphql';
+import { ALL_TODOS_QUERY } from '../../graphql/todos';
 import store, { persistor } from '../../store';
 import { ActionType } from '../../store/ducks/';
 import { getOnline, setOnline } from '../../store/ducks/online';
@@ -29,7 +30,8 @@ import AppTrackedQueries from './AppTrackedQueries';
 
 const cache = new InMemoryCache();
 const errorLink = onError(() => {
-  //
+  // tslint:disable-next-line
+  console.log('Caught Apollo Client Error');
 });
 const httpLink = new HttpLink({
   uri: 'http://localhost:5000/graphql',
@@ -56,7 +58,8 @@ const AppUsingReduxUsingApollo: FC = () => {
   const online = useSelector(getOnline);
   const trackedQueries = useSelector(getTrackedQueries);
   const [trackedLoaded, setTrackedLoaded] = useState(false);
-  const [todosVisible, setTodosVisible] = useState(true);
+  const [onlineQueryFailed, setOnlineQueryFailed] = useState(false);
+
   // TRACKED QUERIES
   useEffect(() => {
     const execute = async () => {
@@ -80,26 +83,32 @@ const AppUsingReduxUsingApollo: FC = () => {
         try {
           await Promise.all(promises);
         } catch (e) {
-          //
+          // ALLOW TRACKED QUERIES TO FAIL
+        }
+        try {
+          await apolloClient.query({
+            fetchPolicy: 'network-only',
+            query: ALL_TODOS_QUERY,
+          });
+        } catch (e) {
+          setOnlineQueryFailed(true);
         }
       }
       setTrackedLoaded(true);
     };
     execute();
   }, []);
-  // TOGGLE TODOS VISIBLE
-  const handlePress = useCallback(() => {
-    setTodosVisible(!todosVisible);
-  }, [todosVisible]);
 
   if (!trackedLoaded) {
     return <Text>Loading Tracked Queries</Text>;
   }
+  if (onlineQueryFailed) {
+    return <Text>Error Online Query</Text>;
+  }
   return (
     <Fragment>
       <AppOnline />
-      <Button title="Toggle Todos Visible" onPress={handlePress} />
-      {todosVisible && <AppTodos />}
+      <AppTodos />
       <AppTrackedQueries />
     </Fragment>
   );
