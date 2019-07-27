@@ -12,8 +12,8 @@ import loggerLink from 'apollo-link-logger';
 import QueueLink from 'apollo-link-queue';
 import { RetryLink } from 'apollo-link-retry';
 import SerializingLink from 'apollo-link-serialize';
-import React, { FC, Fragment, useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import React, { FC, Fragment, useCallback, useEffect, useState } from 'react';
+import { Button, Text } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -59,6 +59,7 @@ const AppUsingReduxUsingApollo: FC = () => {
   const trackedQueries = useSelector(getTrackedQueries);
   const [trackedLoaded, setTrackedLoaded] = useState(false);
   const [onlineQueryFailed, setOnlineQueryFailed] = useState(false);
+  const [todosVisible, setTodosVisible] = useState(true);
 
   // TRACKED QUERIES
   useEffect(() => {
@@ -98,6 +99,9 @@ const AppUsingReduxUsingApollo: FC = () => {
     };
     execute();
   }, []);
+  const handlePress = useCallback(() => {
+    setTodosVisible(!todosVisible);
+  }, [todosVisible]);
 
   if (!trackedLoaded) {
     return <Text>Loading Tracked Queries</Text>;
@@ -108,7 +112,8 @@ const AppUsingReduxUsingApollo: FC = () => {
   return (
     <Fragment>
       <AppOnline />
-      <AppTodos />
+      <Button onPress={handlePress} title="Toggle Todos" />
+      {todosVisible && <AppTodos />}
       <AppTrackedQueries />
     </Fragment>
   );
