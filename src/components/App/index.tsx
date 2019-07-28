@@ -42,8 +42,8 @@ const serializingLink = new SerializingLink();
 const client = new ApolloClient({
   cache,
   link: ApolloLink.from([
-    loggerLink, // TODO: TEMP
-    errorLink, // TODO: TEMP
+    loggerLink,
+    errorLink,
     trackerLink(store.dispatch),
     queueLink,
     serializingLink,
